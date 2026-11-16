@@ -1,0 +1,30 @@
+name: PR Labeler
+
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only preview labels and conflicts
+        type: boolean
+        default: true
+
+permissions: {}
+
+# Scheduled and PR-event runs follow the repository variable PR_AUTOMATION_LIVE (preview unless it is exactly true);
+# a manual run follows its checkbox.
+jobs:
+  labeler:
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      checks: read
+      actions: read
+    uses: kyverno/assistant/.github/workflows/pr-management.yml@bede9905aec1e73f17daf6052d6866f5c99b84eb
+    with:
+      mode: labels
+      dry-run: ${{ github.event_name == 'workflow_dispatch' && (inputs.dry_run && 'true' || 'false') || 'auto' }}
