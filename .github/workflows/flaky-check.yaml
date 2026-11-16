@@ -1,0 +1,16 @@
+name: flaky-check
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+permissions: {}
+jobs:
+  flaky:
+    name: Flaky check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail when the PR is opened, pass on any later event
+        env:
+          ACTION: ${{ github.event.action }}
+        run: |
+          echo "event action: $ACTION"
+          [ "$ACTION" != "opened" ]
